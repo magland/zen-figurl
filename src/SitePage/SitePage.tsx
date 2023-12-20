@@ -63,13 +63,13 @@ const SiteIframe: FunctionComponent<{ siteUrl: string }> = ({ siteUrl }) => {
   return (
     <iframe
       src={siteUrl + '/index.html'}
-      style={{ width: width, height: height }}
+      style={{ width: width, height: height, position: 'absolute', overflow: 'hidden', border: 'none' }}
       title="site"
     />
   )
 }
 
-const SiteNotFoundPage: FunctionComponent<{ siteUrl: string }> = ({ siteUrl }) => {
+const SiteNotFoundPage: FunctionComponent<{ siteUrl: string }> = () => {
   const { route } = useRoute();
   if (route.page !== 'site') throw Error(`Unexpected page: ${route.page}`);
 
