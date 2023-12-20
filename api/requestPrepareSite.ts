@@ -2,7 +2,6 @@ import { VercelRequest, VercelResponse } from '@vercel/node'
 import axios from 'axios'
 
 export default (req: VercelRequest, res: VercelResponse) => {
-    console.log('---- 1')
     if (req.method !== 'GET') {
         res.status(400).send('Invalid method')
         return

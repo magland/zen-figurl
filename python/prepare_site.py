@@ -19,14 +19,13 @@ def main():
                 raise Exception(f'Invalid site uri: {site_uri}')
             kcl.load_file(site_uri, dest=site_tgz_fname)
             object_key_base = f'zen-figurl-sites/kachery/{kachery_zone}/sha1/{sha1}'
-        elif site_uri.startswith('https://zenodo.org/records/') or site_uri.startswith('https://sandbox.zenodo.org/records/'):
+        elif site_uri.startswith('zenodo://') or site_uri.startswith('zenodo-sandbox://'):
             a = site_uri.split('/')
-            record_id = a[4]
-            sandbox = site_uri.startswith('https://sandbox.zenodo.org/records/')
-            if a[5] != 'files':
-                raise Exception(f'Invalid site uri: {site_uri}')
-            file_path = '/'.join(a[6:])
-            _download_file(site_uri, dest=site_tgz_fname)
+            record_id = a[2]
+            sandbox = site_uri.startswith('zenodo-sandbox://')
+            file_path = '/'.join(a[3:])
+            site_url = f'https://{"sandbox.zenodo.org" if sandbox else "zenodo.org"}/records/{record_id}/files/{file_path}?download=1'
+            _download_file(site_url, dest=site_tgz_fname)
             object_key_base = f'zen-figurl-sites/{ "zenodo-sandbox" if sandbox else "zenodo" }/{record_id}/{file_path}'
         else:
             raise Exception(f'Unsupported site URI: {site_uri}')

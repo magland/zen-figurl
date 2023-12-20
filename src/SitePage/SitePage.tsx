@@ -124,12 +124,15 @@ const SiteNotFoundPage: FunctionComponent<{ siteUrl: string }> = ({ siteUrl }) =
         </tbody>
       </table>
       <hr />
+      <p>
+        This site is not yet available. You can request that it be prepared. This will usually take a few minutes. Please only submit the request once.
+      </p>
       {prepareSiteRequestStatus === 'none' ? (
         <button onClick={handlePrepareSite}>Prepare site</button>
       ) : prepareSiteRequestStatus === 'requesting' ? (
         <div>Requesting prepare site...</div>
       ) : prepareSiteRequestStatus === 'requested' ? (
-        <div>Prepare site requested. Please only submit the request once. Check back in a few minutes.</div>
+        <div style={{color: 'darkgreen'}}>Prepare site requested. Please only submit the request once. Check back in a few minutes.</div>
       ) : prepareSiteRequestStatus === 'error' ? (
         <div>
           <div>Problem requesting prepare site</div>
@@ -154,19 +157,13 @@ const siteUriToSiteUrl = (
       validSiteUri: true,
     };
   } else if (
-    siteUri.startsWith('https://zenodo.org/records/') ||
-    siteUri.startsWith('https://sandbox.zenodo.org/records/')
+    siteUri.startsWith('zenodo://') ||
+    siteUri.startsWith('zenodo-sandbox://')
   ) {
     const a = siteUri.split('/');
-    const recordId = a[4];
-    const sandbox = siteUri.startsWith('https://sandbox.zenodo.org/records/');
-    if (a[5] !== 'files') {
-      return {
-        siteUrl: undefined,
-        validSiteUri: false,
-      };
-    }
-    const filePath = a.slice(6).join('/');
+    const recordId = a[2];
+    const sandbox = siteUri.startsWith('zenodo-sandbox://');
+    const filePath = a.slice(3).join('/');
     return {
       siteUrl: `https://neurosift.org/zen-figurl-sites/${
         sandbox ? 'zenodo-sandbox' : 'zenodo'
