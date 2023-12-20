@@ -14,7 +14,7 @@ export default (req: VercelRequest, res: VercelResponse) => {
     }
 
     (async () => {
-        // trigger github workflow to build site
+        // trigger github workflow to prepare site
         const githubToken = process.env.GITHUB_API_TOKEN
         if (!githubToken) {
             res.status(400).send('Missing github token')
@@ -23,7 +23,7 @@ export default (req: VercelRequest, res: VercelResponse) => {
         const repoOrg = 'magland'
         const repoName = 'zen-figurl'
         const branch = 'main'
-        const workflowName = 'build-site.yml'
+        const workflowName = 'prepare-site.yml'
         const workflowInput = {
             siteUri,
             kacheryZone

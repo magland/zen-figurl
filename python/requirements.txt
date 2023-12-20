@@ -1,1 +1,4 @@
+numpy
 kachery-cloud
+boto3
+requests

@@ -1,4 +1,4 @@
-name: build site
+name: prepare site
 on:
   workflow_dispatch:
     inputs:
@@ -22,9 +22,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           cd python && pip install -r requirements.txt
-      - name: Build site
+      - name: Prepare site
         run: |
-          cd python && python build_site.py
+          cd python && python prepare_site.py
         env:
           SITE_URI: ${{ github.event.inputs.siteUri }}
           KACHERY_ZONE: ${{ github.event.inputs.kacheryZone }}

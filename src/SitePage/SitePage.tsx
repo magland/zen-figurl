@@ -1,6 +1,7 @@
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRoute } from '../route';
 import './SitePage.css';
+import { useWindowDimensions } from '@fi-sci/misc'
 
 const SitePage: FunctionComponent = () => {
   const { route } = useRoute();
@@ -51,48 +52,56 @@ const SitePageInner: FunctionComponent<{ siteUri: string; siteUrl: string }> = (
   if (!siteFound) return <SiteNotFoundPage siteUrl={siteUrl} />;
 
   return (
-    <div className="SitePage">
-      <h1>Site Page</h1>
-      <div>siteUrl: {siteUrl}</div>
-    </div>
+    <SiteIframe
+      siteUrl={siteUrl}
+    />
   );
 };
+
+const SiteIframe: FunctionComponent<{ siteUrl: string }> = ({ siteUrl }) => {
+  const {width, height} = useWindowDimensions();
+  return (
+    <iframe
+      src={siteUrl + '/index.html'}
+      style={{ width: width, height: height }}
+      title="site"
+    />
+  )
+}
 
 const SiteNotFoundPage: FunctionComponent<{ siteUrl: string }> = ({ siteUrl }) => {
   const { route } = useRoute();
   if (route.page !== 'site') throw Error(`Unexpected page: ${route.page}`);
 
-  const [buildSiteRequestStatus, setBuildSiteRequestStatus] = useState<'none' | 'error' | 'requesting' | 'requested'>(
+  const [prepareSiteRequestStatus, setPrepareSiteRequestStatus] = useState<'none' | 'error' | 'requesting' | 'requested'>(
     'none'
   );
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
-  const handleBuildSite = useCallback(() => {
+  const handlePrepareSite = useCallback(() => {
     (async () => {
-      setBuildSiteRequestStatus('requesting');
+      setPrepareSiteRequestStatus('requesting');
       let resp;
-      console.log('--- 1');
       try {
         resp = await fetch(
-          `/api/requestBuildSite?siteUri=${route.siteUri}&kacheryZone=${route.kacheryZone || 'default'}`
+          `/api/requestPrepareSite?siteUri=${route.siteUri}&kacheryZone=${route.kacheryZone || 'default'}`
         );
         if (!resp.ok) {
-          console.warn(`Problem requesting build site: ${resp.status} ${resp.statusText}`);
-          setBuildSiteRequestStatus('error');
+          console.warn(`Problem requesting prepare site: ${resp.status} ${resp.statusText}`);
+          setPrepareSiteRequestStatus('error');
           setErrorMessage(`${resp.status} ${resp.statusText}`);
           return;
         }
         const obj = await resp.json();
-        console.info(`Build site request: ${JSON.stringify(obj)}`);
         if (!obj.success) {
-          setBuildSiteRequestStatus('error');
+          setPrepareSiteRequestStatus('error');
           setErrorMessage(obj.errorMessage);
           return;
         }
-        setBuildSiteRequestStatus('requested');
+        setPrepareSiteRequestStatus('requested');
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
-        setBuildSiteRequestStatus('error');
+        setPrepareSiteRequestStatus('error');
         setErrorMessage(err.message);
         return;
       }
@@ -115,19 +124,19 @@ const SiteNotFoundPage: FunctionComponent<{ siteUrl: string }> = ({ siteUrl }) =
         </tbody>
       </table>
       <hr />
-      {buildSiteRequestStatus === 'none' ? (
-        <button onClick={handleBuildSite}>Build site</button>
-      ) : buildSiteRequestStatus === 'requesting' ? (
-        <div>Requesting build site...</div>
-      ) : buildSiteRequestStatus === 'requested' ? (
-        <div>Build site requested. Please only submit the request once. Check back in a few minutes.</div>
-      ) : buildSiteRequestStatus === 'error' ? (
+      {prepareSiteRequestStatus === 'none' ? (
+        <button onClick={handlePrepareSite}>Prepare site</button>
+      ) : prepareSiteRequestStatus === 'requesting' ? (
+        <div>Requesting prepare site...</div>
+      ) : prepareSiteRequestStatus === 'requested' ? (
+        <div>Prepare site requested. Please only submit the request once. Check back in a few minutes.</div>
+      ) : prepareSiteRequestStatus === 'error' ? (
         <div>
-          <div>Problem requesting build site</div>
+          <div>Problem requesting prepare site</div>
           <div>{errorMessage}</div>
         </div>
       ) : (
-        <div>Unexpected build site request status: {buildSiteRequestStatus}</div>
+        <div>Unexpected prepare site request status: {prepareSiteRequestStatus}</div>
       )}
     </div>
   );
