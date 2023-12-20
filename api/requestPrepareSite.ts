@@ -46,7 +46,7 @@ export default (req: VercelRequest, res: VercelResponse) => {
             res.status(500).send(`Error triggering workflow: ${response.data}`)
             return
         }
-        res.status(200).send('OK')
+        res.status(200).send({success: true})
     })().catch(err => {
         console.error(err)
         res.status(500).send(`Error: ${err.message}`)
