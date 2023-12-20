@@ -117,10 +117,6 @@ const SiteNotFoundPage: FunctionComponent<{ siteUrl: string }> = ({ siteUrl }) =
             <td>URI</td>
             <td>{route.siteUri}</td>
           </tr>
-          <tr>
-            <td>URL</td>
-            <td>{siteUrl}</td>
-          </tr>
         </tbody>
       </table>
       <hr />
@@ -168,11 +164,6 @@ const siteUriToSiteUrl = (
       siteUrl: `https://neurosift.org/zen-figurl-sites/${
         sandbox ? 'zenodo-sandbox' : 'zenodo'
       }/${recordId}/${filePath}`,
-      validSiteUri: true,
-    };
-  } else if (siteUri.startsWith('https://') || siteUri.startsWith('http://')) {
-    return {
-      siteUrl: siteUri,
       validSiteUri: true,
     };
   } else {
