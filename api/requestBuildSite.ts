@@ -21,7 +21,7 @@ export default (req: VercelRequest, res: VercelResponse) => {
             return
         }
         const repoOrg = 'magland'
-        const repoName = 'zen-figurl-site-builder'
+        const repoName = 'zen-figurl'
         const branch = 'main'
         const workflowName = 'build-site.yml'
         const workflowInput = {
